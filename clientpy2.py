@@ -18,7 +18,10 @@ statusDict = {
   "WORMHOLES_POS": []
 }
 
-def run(user, password, *commands):
+user = "Theboys"
+password = "vmarutha"
+
+def run(*commands):
     HOST, PORT = "codebb.cloudapp.net", 17429
     
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
@@ -38,7 +41,7 @@ def run(user, password, *commands):
         sock.close()
     return returnList
 
-def subscribe(user, password):
+def subscribe():
     HOST, PORT = "codebb.cloudapp.net", 17429
     
     data=user + " " + password + "\nSUBSCRIBE\n"
@@ -110,8 +113,37 @@ def status():
 				numOfWormholes = int(splitStatus[x])
 			x  = x + 1
 
-run("Theboys", "vmarutha", "ACCELERATE 3.14 1")
+direction = {
+    1: ["WEST", "3.14"],
+    2: ["EAST", "0"],
+    3: ["NORTH", "1.57"],
+    4: ["SOUTH", "4.71"],
+}
+
 status()
-print statusDict
+
+while 1:
+    status()
+    # Find all the mines in our visible radius that is not ours
+    if (statusDict["NUM_MINES"]):
+        not_ours = []
+        for mine in statusDict["MINES_POS"]:
+            if mine[0] != user:
+                not_ours.append(mine)
+        run(user, password, "BRAKE")
+
+        # find when we stop
+        while(statusDict["DX"] and statusDict["DY"]):
+            status()
+        
+        statusDict[]
+
+
+        
+    dir = randint(1, 4)
+    print dir, direction[dir][0]
+    run(user, password, "ACCELERATE " + direction[dir][1] + " 1")
+    run(user, password, "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+    sleep(3)
 #run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
 
