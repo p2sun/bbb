@@ -59,7 +59,6 @@ def status():
     for s in xrange(len(status)):
     	splitStatus = status[s].split()
     	for x in xrange(len(splitStatus)):
-    		print x
     		if (x == 0):
     			statusDict["COMMAND"] = splitStatus[x]
     		elif (x == 1):
@@ -73,8 +72,8 @@ def status():
     		elif (x == 6):
     			statusDict["NUM_MINES"] = splitStatus[x]
 
-
-run("Theboys", "vmarutha", "ACCELERATE 3.14 1")
-status()
-run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+while 1:
+    run("Theboys", "vmarutha", "ACCELERATE 3.14 1")
+    status()
+    run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
 
