@@ -36,3 +36,6 @@ def subscribe(user, password):
             rline = sfile.readline()
     finally:
         sock.close()
+
+#TESTING
+run("Theboys", "vmarutha", "STATUS")
