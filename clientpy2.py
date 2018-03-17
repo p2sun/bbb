@@ -2,7 +2,7 @@ import socket
 import sys
     
 # Status dictionary 
-StatusDict = {
+statusDict = {
   "COMMAND": "",
   "X": "",
   "Y": "",
@@ -54,38 +54,27 @@ def subscribe(user, password):
     finally:
         sock.close()
 
-#TESTING
-status = run("Theboys", "vmarutha", "STATUS")
-for s in xrange(len(status)):
-	test = dict(StatusDict)
-	splitStatus = status[s].split()
-	print splitStatus
-	for x in xrange(len(splitStatus)):
-		print x
-		if (x == 0):
-			test["COMMAND"] = splitStatus[x]
-		elif (x == 1):
-			test["X"] = splitStatus[x]
-		elif (x == 2):
-			test["Y"] = splitStatus[x]
-		elif (x == 3):
-			test["DX"] = splitStatus[x]
-		elif (x == 4):
-			test["DY"] = splitStatus[x]
-		elif (x == 6):
-			test["NUM_MINES"] = splitStatus[x]
-	print test
+def status():
+    status = run("Theboys", "vmarutha", "STATUS")
+    for s in xrange(len(status)):
+    	splitStatus = status[s].split()
+    	for x in xrange(len(splitStatus)):
+    		print x
+    		if (x == 0):
+    			statusDict["COMMAND"] = splitStatus[x]
+    		elif (x == 1):
+    			statusDict["X"] = splitStatus[x]
+    		elif (x == 2):
+    			statusDict["Y"] = splitStatus[x]
+    		elif (x == 3):
+    			statusDict["DX"] = splitStatus[x]
+    		elif (x == 4):
+    			statusDict["DY"] = splitStatus[x]
+    		elif (x == 6):
+    			statusDict["NUM_MINES"] = splitStatus[x]
 
-StatusDict = {
-  "COMMAND": "",
-  "X": "",
-  "Y": "",
-  "DX": "",
-  "DY" : "",
-  "NUM_MINES": "",
-  "NUM_PLAYERS": "",
-  "PLAYER_POS": [],
-  "NUM_BOMBS": "",
-  "NUM_WORMHOLES": "",
-  "WORMHOLES": []
-}
+
+run("Theboys", "vmarutha", "ACCELERATE 3.14 1")
+status()
+run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+
