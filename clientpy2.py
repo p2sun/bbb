@@ -18,6 +18,9 @@ statusDict = {
   "WORMHOLES_POS": []
 }
 
+def calculateDistance(x1, y1, x2, y2):
+    return sqrt((x1-x2)^2 + (y1-y2)^2)
+
 user = "Theboys"
 password = "vmarutha"
 
@@ -60,7 +63,7 @@ def subscribe():
         sock.close()
 
 def status():
-    status = run("Theboys", "vmarutha", "STATUS")
+    status = run("STATUS")
     for s in xrange(len(status)):
     	splitStatus = status[s].split()
 	numOfPlayers = 0;
@@ -130,20 +133,18 @@ while 1:
         for mine in statusDict["MINES_POS"]:
             if mine[0] != user:
                 not_ours.append(mine)
-        run(user, password, "BRAKE")
+        run("BRAKE")
 
         # find when we stop
-        while(statusDict["DX"] and statusDict["DY"]):
+        while(float(statusDict["DX"]) and float(statusDict["DY"])):
             status()
-        
-        statusDict[]
 
 
         
     dir = randint(1, 4)
     print dir, direction[dir][0]
-    run(user, password, "ACCELERATE " + direction[dir][1] + " 1")
-    run(user, password, "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+    run("ACCELERATE " + direction[dir][1] + " 1")
+    run("BOMB "+statusDict["X"]+' ' +statusDict["Y"])
     sleep(3)
 #run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
 
