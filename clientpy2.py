@@ -9,11 +9,13 @@ statusDict = {
   "DX": "",
   "DY" : "",
   "NUM_MINES": "",
+  "MINES_POS": [],
   "NUM_PLAYERS": "",
   "PLAYER_POS": [],
   "NUM_BOMBS": "",
+  "BOMBS_POS": [],
   "NUM_WORMHOLES": "",
-  "WORMHOLES": []
+  "WORMHOLES_POS": []
 }
 
 def run(user, password, *commands):
@@ -58,22 +60,58 @@ def status():
     status = run("Theboys", "vmarutha", "STATUS")
     for s in xrange(len(status)):
     	splitStatus = status[s].split()
-    	for x in xrange(len(splitStatus)):
-    		if (x == 0):
-    			statusDict["COMMAND"] = splitStatus[x]
-    		elif (x == 1):
-    			statusDict["X"] = splitStatus[x]
-    		elif (x == 2):
-    			statusDict["Y"] = splitStatus[x]
-    		elif (x == 3):
-    			statusDict["DX"] = splitStatus[x]
-    		elif (x == 4):
-    			statusDict["DY"] = splitStatus[x]
-    		elif (x == 6):
-    			statusDict["NUM_MINES"] = splitStatus[x]
+	numOfPlayers = 0;
+	numOfMines = 0;
+	numOfBombs = 0
+	numOfWormholes = 0;
+	x = 0
+    	while (x < len(splitStatus)):
+		if (numOfPlayers > 0):
+			statusDict["PLAYER_POS"].append((splitStatus[x], splitStatus[x+1], splitStatus[x+2], splitStatus[x+3]))
+			x = x + 4
+			numOfPlayers = numOfPlayers - 1
+		elif (numOfMines > 0):
+			statusDict["MINES_POS"].append((splitStatus[x], splitStatus[x+1], splitStatus[x+2]))
+			x = x + 3
+			numOfMines = numOfMines - 1
+		elif (numOfBombs > 0):
+			statusDict["BOMBS_POS"].append((splitStatus[x], splitStatus[x+1]))
+			x = x + 2
+			numOfBombs = numOfBombs - 1
+		elif (numOfWormholes > 0):
+			statusDict["WORMHOLES_POS"].append((splitStatus[x], splitStatus[x+1], splitStatus[x+2], splitStatus[x+3], splitStatus[x+4]))
+			x = x + 5
+			numOfWormholes = numOfWormholes - 1
+		else:
+    			if (x == 0):
+    				statusDict["COMMAND"] = splitStatus[x]
+    			elif (x == 1):
+    				statusDict["X"] = splitStatus[x]
+    			elif (x == 2):
+    				statusDict["Y"] = splitStatus[x]
+   	 		elif (x == 3):
+    				statusDict["DX"] = splitStatus[x]
+    			elif (x == 4):
+    				statusDict["DY"] = splitStatus[x]
+    			elif (x == 6):
+    				statusDict["NUM_MINES"] = splitStatus[x]
+				numOfMines = int(splitStatus[x])
+			elif (splitStatus[x] == "PLAYERS"):
+				x = x + 1
+				statusDict["NUM_PLAYERS"] = splitStatus[x]
+				numOfPlayers = int(splitStatus[x])
+			elif (splitStatus[x] == "BOMBS"):
+				x = x + 1
+				statusDict["NUM_BOMBS"] = splitStatus[x]
+				numOfBombs = int(splitStatus[x])
+			elif (splitStatus[x] == "WORMHOLES"):
+				x = x + 1
+				statusDict["NUM_WORMHOLES"] = splitStatus[x]
+				numOfWormholes = int(splitStatus[x])
+			x  = x + 1
 
-while 1:
-    run("Theboys", "vmarutha", "ACCELERATE 3.14 1")
-    status()
-    run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+run("Theboys", "vmarutha", "ACCELERATE 3.14 1")
+status()
+print statusDict
+#run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
 
