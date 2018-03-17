@@ -2,6 +2,7 @@ import socket
 import sys
 from random import randint
 from time import sleep
+import math
 
 # Status dictionary 
 statusDict = {
@@ -24,14 +25,17 @@ def calculateDistance(x1, y1, x2, y2):
     return sqrt((x1-x2)^2 + (y1-y2)^2)
 
 def calculateAngleBetweenPoints(x1, y1, x2, y2):
-    print math.atan2(y2-y1, x2-x1)
-    return math.atan2(y2-y1, x2-x1)
+    t = math.atan2(y1-y2, x2-x1)
+    t = 2*(3.14159) - t
+    if (t < 0):
+        t = t + 2*(3.14159)
+    return t
 
 user = "Theboys"
 password = "vmarutha"
 
 def run(*commands):
-    HOST, PORT = "codebb.cloudapp.net", 17429
+    HOST, PORT = "localhost", 17429
     
     data=user + " " + password + "\n" + "\n".join(commands) + "\nCLOSE_CONNECTION\n"
     returnList = [] 
@@ -44,7 +48,7 @@ def run(*commands):
         rline = sfile.readline()
         while rline:
 	    returnList.append(rline.strip())
-            print(rline.strip())
+            #print(rline.strip())
             rline = sfile.readline()
     finally:
         sock.close()
@@ -140,42 +144,75 @@ def gotoPoints(coords):
 
 
 direction = {
-    1: ["WEST", "3.14"],
-    2: ["EAST", "0"],
-    3: ["NORTH", "1.57"],
-    4: ["SOUTH", "4.71"],
+    3: ["WEST", "3.14"],
+    1: ["EAST", "0"],
+    4: ["SOUTH", "1.57"],
+    2: ["NORTH", "4.71"],
 }
 
 status()
-
+counter = 0
+tickCounter = 0
+captureLimit = 0
 while 1:
     status()
     # Find all the mines in our visible radius that is not ours
-    # if (int(statusDict["NUM_MINES"])):
-    if(1):
+    #print "Num of mines " + statusDict["NUM_MINES"] 
+    if (int(statusDict["NUM_MINES"])):
+    #if 1:
+    # if(1):
         not_ours = []
-        statusDict["MINES_POS"] = [("rand", statusDict["X"], statusDict["Y"])]
-        for mine in statusDict["MINES_POS"]:
-            if mine[0] != user:
-                not_ours.append(mine)
-        print("FMLFMLFMLMFLFM")
-        print(not_ours)
-        if not_ours: 
-            print("BRAKINGGGGG11111")
-            run("BRAKE")
+        #statusDict["MINES_POS"] = [("rand", "5000.0", "5000.0")]
+        print counter
+        if (counter < len(statusDict["MINES_POS"])):
+            for mine in statusDict["MINES_POS"]:
+                if (captureLimit > 2):
+                    captureLimit = 0
+                    break
+                if mine[0] != user:
+                    if mine not in not_ours:
+                        not_ours.append(mine)
+                        print("+++")
+                        print not_ours
+                        run("BRAKE")
+                        print "SLEEPING"
+                        sleep(10)
+                        status()
+                        print statusDict["X"], statusDict["Y"]
+                        print str(calculateAngleBetweenPoints(float(statusDict["X"]), float(statusDict["Y"]), float(mine[1]), float(mine[2])))
+                        run("ACCELERATE " + str(calculateAngleBetweenPoints(float(statusDict["X"]), float(statusDict["Y"]), float(mine[1]), float(mine[2]))) + " 1")
+                        print "Second SLEEP"
+                        sleep(5)
+                        captureLimit = captureLimit + 1
+                        #Should have gotten mine now
+                        break
+                else:
+                    print "Own this already!"
+                    print mine
+                    counter = counter + 1
+        else:
+            #Go in a random direction
+            counter = 0
+            dir = randint(2, 2)
+            print dir, direction[dir][0]
+            run("ACCELERATE " + direction[dir][1] + " 1")
+            run("BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+            sleep(3)
+            tickCounter = 0
 
 
-            # find when we stop
-            while(float(statusDict["DX"]) != 0.0 or float(statusDict["DY"]) != 0.0):
-                status()
-                print("BRAKINGGGGG")
-            exit()    
-            # gotoPoints(not_ours)
-        
-    dir = randint(1, 4)
-    print dir, direction[dir][0]
-    run("ACCELERATE " + direction[dir][1] + " 1")
-    run("BOMB "+statusDict["X"]+' ' +statusDict["Y"])
-    sleep(3)
+
+    else:
+        tickCounter = tickCounter + 1
+        if (tickCounter >= 800):
+            tickCounter = 0
+        t = (tickCounter / 200) + 1
+        print tickCounter
+        dir = randint(t, t)
+        #print dir, direction[dir][0]
+        run("ACCELERATE " + direction[dir][1] + " 1")
+        run("BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+        #sleep(1)
+
 #run("Theboys", "vmarutha", "BOMB "+statusDict["X"]+' ' +statusDict["Y"])
 
