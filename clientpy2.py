@@ -1,6 +1,8 @@
 import socket
 import sys
-    
+from random import randint
+from time import sleep
+
 # Status dictionary 
 statusDict = {
   "COMMAND": "",
@@ -20,6 +22,10 @@ statusDict = {
 
 def calculateDistance(x1, y1, x2, y2):
     return sqrt((x1-x2)^2 + (y1-y2)^2)
+
+def calculateAngleBetweenPoints(x1, y1, x2, y2):
+    print math.atan2(y2-y1, x2-x1)
+    return math.atan2(y2-y1, x2-x1)
 
 user = "Theboys"
 password = "vmarutha"
@@ -116,6 +122,23 @@ def status():
 				numOfWormholes = int(splitStatus[x])
 			x  = x + 1
 
+
+def gotoPoints(coords):
+    while coords:
+        point = coords.pop()
+        radians = calculateAngleBetweenPoints(statusDict["X"], statusDict["Y"], point[1], point[2])
+        run("ACCELERATE " + radians + " 1")
+        run("BOMB "+statusDict["X"]+' ' +statusDict["Y"])
+
+        while(float(statusDict["X"] != point[1]) or float(statusDict["Y"] != point[2])):
+                status()
+
+        run("BRAKE")
+        while(float(statusDict["DX"]) or float(statusDict["DY"])):
+                status()
+                print("random")
+
+
 direction = {
     1: ["WEST", "3.14"],
     2: ["EAST", "0"],
@@ -128,18 +151,26 @@ status()
 while 1:
     status()
     # Find all the mines in our visible radius that is not ours
-    if (statusDict["NUM_MINES"]):
+    # if (int(statusDict["NUM_MINES"])):
+    if(1):
         not_ours = []
+        statusDict["MINES_POS"] = [("rand", statusDict["X"], statusDict["Y"])]
         for mine in statusDict["MINES_POS"]:
             if mine[0] != user:
                 not_ours.append(mine)
-        run("BRAKE")
+        print("FMLFMLFMLMFLFM")
+        print(not_ours)
+        if not_ours: 
+            print("BRAKINGGGGG11111")
+            run("BRAKE")
 
-        # find when we stop
-        while(float(statusDict["DX"]) and float(statusDict["DY"])):
-            status()
 
-
+            # find when we stop
+            while(float(statusDict["DX"]) != 0.0 or float(statusDict["DY"]) != 0.0):
+                status()
+                print("BRAKINGGGGG")
+            exit()    
+            # gotoPoints(not_ours)
         
     dir = randint(1, 4)
     print dir, direction[dir][0]
