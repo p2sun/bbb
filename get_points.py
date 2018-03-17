@@ -7,8 +7,9 @@ from skimage.color import rgb2gray
 import numpy as np
 
 
+dirname, filename = os.path.split(os.path.abspath(__file__))
 
-DRIVER_BIN = os.path.join("/usr/local/share", "chromedriver")
+DRIVER_BIN = os.path.join(dirname, "chromedriver")
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
 
@@ -57,7 +58,4 @@ def pipeline():
     crop_image(location,size)
 
     mines, worm_holes = get_areas_interest()
-    print mines
-    print worm_holes
-
-pipeline()
+    return mines,worm_holes
